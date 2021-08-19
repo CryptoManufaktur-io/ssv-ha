@@ -1,0 +1,91 @@
+version: "3.4"
+services:
+  ssv:
+    image: bloxstaking/ssv-node:v0.0.15
+    user: "12000:12000"
+    configs:
+      - source: ssv-config.yaml
+        target: /config.yaml
+    volumes:
+      - ssv-data:/tmp/ssv-db
+    environment:
+      - CONFIG_PATH=/config.yaml
+      - HOME=/tmp
+    command: make BUILD_PATH=/go/bin/ssvnode start-node
+    ports:
+      - protocol: tcp
+        published: 13000
+        target: 13000
+#        mode: host
+      - protocol: udp
+        published: 12000
+        target: 12000
+#        mode: host
+    deploy:
+      mode: replicated
+      replicas: 1
+      placement:
+        constraints: ["node.role == worker"]
+      resources:
+        reservations:
+          memory: 500M
+    logging:
+      driver: awslogs
+      options:
+        awslogs-region: us-east-2
+        awslogs-group: ssv
+        awslogs-stream: prater-ssv
+
+  haproxy:
+    image: haproxy:latest
+    user: root
+    entrypoint: ["/bin/sh", "-c"]
+    command:
+      - |
+        apt-get update
+        apt-get install -y curl jq bc ca-certificates
+        haproxy -f /usr/local/etc/haproxy/haproxy.cfg
+    networks:
+      default:
+        aliases:
+          - goerliws-lb.example.com
+          - goerli-lb.example.com
+          - prater-lb.example.com
+    configs:
+      - source: praterssv-haproxy.cfg
+        target: /usr/local/etc/haproxy/haproxy.cfg
+      - source: check-ecsync.sh
+        target: /var/lib/haproxy/check-ecsync.sh
+        mode: 0555
+      - source: check-ccsync.sh
+        target: /var/lib/haproxy/check-ccsync.sh
+        mode: 0555
+    deploy:
+      mode: replicated
+      replicas: 1
+      placement:
+        constraints: ["node.role == worker"]
+    logging:
+      driver: awslogs
+      options:
+        awslogs-region: us-east-2
+        awslogs-group: ssv
+        awslogs-stream: haproxy
+
+configs:
+  ssv-config.yaml:
+    external: true
+  praterssv-haproxy.cfg:
+    external: true
+  check-ecsync.sh:
+    external: true
+  check-ccsync.sh:
+    external: true
+
+volumes:
+  ssv-data:
+    driver: local
+    driver_opts:
+      type: nfs
+      o: "addr=MYHOST.efs.us-east-2.amazonaws.com,nfsvers=4.1,rsize=1048576,wsize=1048576,hard,timeo=600,retrans=2,noresvport"
+      device: "MYHOST.efs.us-east-2.amazonaws.com:/ssv-db"

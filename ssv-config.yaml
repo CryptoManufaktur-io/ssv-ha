@@ -1,0 +1,15 @@
+db:
+  Path: /tmp/ssv-db
+  Type: badger-db
+p2p:
+  DiscoveryType: discv5
+eth2:
+  BeaconNodeAddr: https://prater-lb.example.com
+  Network: prater
+eth1:
+  ETH1Addr: wss://goerliws-lb.example.com
+  RegistryContractAddr: 0x687fb596F3892904F879118e2113e1EEe8746C2E
+OperatorPrivateKey: MYKEY
+global:
+  LogFormat: json
+  LogLevelFormat: lowercase
