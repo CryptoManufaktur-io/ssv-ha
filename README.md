@@ -17,7 +17,7 @@ for the LB in here, and your NFS mount or other shared storage.
 
 The following files would live as "configs" in docker swarm or k8s and get referenced by the yml file that defines the stack
 
-- praterssv-haproxy.cfg - the configuration file for haproxy
+- prater-haproxy.cfg - the configuration file for haproxy
   - Adjust domain names in here, both for ACLs (what the rocketpool services connect to via the haproxy service) and backend (the servers things get load-balanced to)
   - Note: The server name has to be the FQDN of the server for HTTPS not WSS, the external check script relies on it. It otherwise gets an IP address, which won't work with how eth-docker does TLS via traefik.
     So if your server is available as `goerli-ec-a.example.com` for HTTPS and `goerli-ecws-a.example.com` for WSS, then the two lines for it would respectively read

@@ -75,7 +75,7 @@ services:
 configs:
   ssv-config.yaml:
     external: true
-  praterssv-haproxy.cfg:
+  prater-haproxy.cfg:
     external: true
   check-ecsync.sh:
     external: true
