@@ -1,3 +1,10 @@
+x-logging: &logging
+  logging:
+    driver: json-file
+    options:
+      max-size: 20m
+      max-file: "3"
+
 version: "3.4"
 services:
   ssv:
@@ -29,12 +36,7 @@ services:
       resources:
         reservations:
           memory: 500M
-    logging:
-      driver: awslogs
-      options:
-        awslogs-region: us-east-2
-        awslogs-group: ssv
-        awslogs-stream: prater-ssv
+    <<: *logging
 
   haproxy:
     image: haproxy:latest
@@ -52,7 +54,7 @@ services:
           - goerli-lb.example.com
           - prater-lb.example.com
     configs:
-      - source: praterssv-haproxy.cfg
+      - source: prater-haproxy.cfg
         target: /usr/local/etc/haproxy/haproxy.cfg
       - source: check-ecsync.sh
         target: /var/lib/haproxy/check-ecsync.sh
@@ -65,12 +67,7 @@ services:
       replicas: 1
       placement:
         constraints: ["node.role == worker"]
-    logging:
-      driver: awslogs
-      options:
-        awslogs-region: us-east-2
-        awslogs-group: ssv
-        awslogs-stream: haproxy
+    <<: *logging
 
 configs:
   ssv-config.yaml:
