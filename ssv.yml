@@ -1,7 +1,7 @@
 version: "3.4"
 services:
   ssv:
-    image: bloxstaking/ssv-node:v0.0.15
+    image: bloxstaking/ssv-node:latest
     user: "12000:12000"
     configs:
       - source: ssv-config.yaml
@@ -16,11 +16,11 @@ services:
       - protocol: tcp
         published: 13000
         target: 13000
-#        mode: host
+        mode: host
       - protocol: udp
         published: 12000
         target: 12000
-#        mode: host
+        mode: host
     deploy:
       mode: replicated
       replicas: 1
