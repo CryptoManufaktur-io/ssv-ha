@@ -3,6 +3,8 @@ db:
   Type: badger-db
 p2p:
   DiscoveryType: discv5
+  TcpPort: 13000
+  UdpPort: 12000
 eth2:
   BeaconNodeAddr: https://prater-lb.example.com
   Network: prater
@@ -13,3 +15,4 @@ OperatorPrivateKey: MYKEY
 global:
   LogFormat: json
   LogLevelFormat: lowercase
+  LogLevel: info
