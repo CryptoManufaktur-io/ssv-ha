@@ -18,4 +18,3 @@ if [ "${SYNC}" = "false" -a "${PEERS}" -ge "$MIN_PEERS" ]; then
 else
   return 1
 fi
-

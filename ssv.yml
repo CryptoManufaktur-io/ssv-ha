@@ -5,13 +5,13 @@ x-logging: &logging
       max-size: 20m
       max-file: "3"
 
-version: "3.4"
+version: "3.9"
 services:
   ssv:
     image: bloxstaking/ssv-node:latest
     user: "12000:12000"
     configs:
-      - source: ssv-config.yaml
+      - source: config.yaml
         target: /config.yaml
     volumes:
       - ssv-data:/tmp/ssv-db
@@ -52,9 +52,9 @@ services:
         aliases:
           - goerliws-lb.example.com
           - goerli-lb.example.com
-          - prater-lb.example.com
+          - goerlicl-lb.example.com
     configs:
-      - source: prater-haproxy.cfg
+      - source: goerli-haproxy.cfg
         target: /usr/local/etc/haproxy/haproxy.cfg
       - source: check-ecsync.sh
         target: /var/lib/haproxy/check-ecsync.sh
@@ -64,15 +64,21 @@ services:
         mode: 0555
     deploy:
       mode: replicated
-      replicas: 1
+      replicas: 2
       placement:
         constraints: ["node.role == worker"]
+    healthcheck:
+      test: curl -sS http://localhost:8405/metrics || exit 1
+      interval: 60s
+      retries: 5
+      start_period: 20s
+      timeout: 10s
     <<: *logging
 
 configs:
-  ssv-config.yaml:
+  config.yaml:
     external: true
-  prater-haproxy.cfg:
+  goerli-haproxy.cfg:
     external: true
   check-ecsync.sh:
     external: true
