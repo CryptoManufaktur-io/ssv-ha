@@ -1,3 +1,8 @@
+# Legacy
+
+This repo has been archived. SSV now supports fallback CL and EL natively, and there is no reason to use an
+external proxy for it.
+
 # ssv-ha
 Highly available SSV node deployment
 =======
